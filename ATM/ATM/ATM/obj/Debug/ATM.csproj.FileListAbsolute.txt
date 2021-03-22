@@ -1,0 +1,7 @@
+D:\учеба\third year\DotNetProjects\ATM\ATM\ATM\bin\Debug\ATM.exe.config
+D:\учеба\third year\DotNetProjects\ATM\ATM\ATM\bin\Debug\ATM.exe
+D:\учеба\third year\DotNetProjects\ATM\ATM\ATM\bin\Debug\ATM.pdb
+D:\учеба\third year\DotNetProjects\ATM\ATM\ATM\obj\Debug\ATM.csprojAssemblyReference.cache
+D:\учеба\third year\DotNetProjects\ATM\ATM\ATM\obj\Debug\ATM.csproj.CoreCompileInputs.cache
+D:\учеба\third year\DotNetProjects\ATM\ATM\ATM\obj\Debug\ATM.exe
+D:\учеба\third year\DotNetProjects\ATM\ATM\ATM\obj\Debug\ATM.pdb
