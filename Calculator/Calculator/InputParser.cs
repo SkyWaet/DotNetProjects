@@ -15,6 +15,14 @@ namespace Calculator
         private Regex exceptions = new Regex(@"-\(-[0-9ABC]+\)");
         private Regex innerNumber = new Regex(@"[0-9ABC]+");
 
+        private static Dictionary<char, int> digits = new Dictionary<char, int>()
+        {
+            { 'A', 10 },
+            { 'B', 11 },
+            { 'C', 12 },
+            { 'D', 13 }
+        };
+
         public bool isOperation(char input)
         {
             return operation.IsMatch(""+input);
@@ -67,67 +75,85 @@ namespace Calculator
             return (operation == '+' || operation == '-') ? 0 : 1;
         }
 
-        private string ToDecimal(string other)
+        private double ToDecimal(string str)
         {
-            string[] parts = other.Split(',');
-            double ans = 0;
-           
-            int sign = other[0] == '-'?-1:1;
-            if(sign == -1)
+            string[] number = new string[2];
+            if (str.Contains(','))
             {
-                parts[0] = parts[0].Substring(1);
+                number = str.Split(',');
             }
-            int degree = parts[0].Length - 1;
-            foreach (var digit in parts[0]){
-                ans += GetIntValue(digit) * Math.Pow(13, degree);
-                degree--;
-            }
-            degree = -1;
-            if (parts.Length == 2)
+            else
             {
-                foreach (var digit in parts[1])
+                number[0] = str;
+                number[1] = "0";
+            }
+            int sign;
+            if (number[0].Contains('-'))
+            {
+                sign = -1;
+                number[0] = number[0].Replace("-", "");
+            }
+            else
+            {
+                sign = 1;
+            }
+            double decimalNum = 0;
+            int c = number[0].Length - 1;
+
+            int tmp = 0;
+            for (int i = 0; i < number[0].Length; ++i)
+            {
+                if (!(int.TryParse(number[0][i].ToString(), out tmp)))
                 {
-                    ans += GetIntValue(digit) * Math.Pow(13, degree);
-                    degree--;
+                    tmp = digits[number[0][i]];
+                }
+                decimalNum += tmp * Math.Pow(13, c);
+                c--;
+            }
+            if (number[1].Length != 0 && number[1] != "0")
+            {
+                for (int i = 1; i <= number[1].Length; i++)
+                {
+                    if (!(int.TryParse(number[1][i - 1].ToString(), out tmp)))
+                    {
+                        tmp = digits[number[1][i - 1]];
+                    }
+                    decimalNum += tmp * Math.Pow(13, -i);
                 }
             }
-            ans *= sign; 
-            return ans.ToString();
+            return (sign == -1) ? -decimalNum : decimalNum;          
         }
 
-        private string FromDecimal(double dec)
+        private string FromDecimal(double num)
         {
-            Console.WriteLine("Dec = " + dec);
-            int sign = dec > 0 ? 1 : -1; 
-            double abs = Math.Abs(dec);
-            int integer = (int)Math.Truncate(abs);
-            double floating = abs - integer;
+            int sign = (num < 0) ? -1 : 1;
+            num = Math.Abs(num);
+            int zel = (int)Math.Truncate(num);
+            double FracVal = num - zel;
+            string StrInt = "";
+            do
+            {
+                StrInt = GetLetter(zel % 13) + StrInt;
+                zel = zel / 13;
+            } while (zel != 0);
 
-            string intInOther = "";
-            if(integer == 0)
+            if (FracVal != 0)
             {
-                return integer.ToString();
+                string FracPart = "";
+                int tmp;
+                while (FracVal > 0 && FracPart.Length <= 5)
+                {
+                    FracVal = FracVal * 13;
+                    tmp = (int)Math.Truncate(FracVal);
+                    FracPart = FracPart + GetLetter(tmp);
+                    FracVal = FracVal - tmp;
+                }
+                StrInt = StrInt + "," + Convert.ToString(FracPart);
             }
-            while(integer > 0)
-            {
-                intInOther = GetLetter(integer % 13) + intInOther;
-                integer /= 13;
-            }
-            if(sign == -1)
-            {
-                intInOther = "-" + intInOther;
-            }
-            StringBuilder floatingInOther = new StringBuilder();
-            while(floating > 0 && floatingInOther.Length <= 6)
-            {
-                floating *= 13;
-                int intPart = (int)Math.Truncate(floating);
-                floatingInOther.Append(GetLetter(intPart));
-                floating -= intPart;                
-            }
-
-            return floatingInOther.Length > 0 ? intInOther+","+floatingInOther.ToString() : intInOther;
+            return (sign == -1) ? "-" + StrInt : StrInt;            
         }
+
+
         private Queue<string> ParseInput(String input)
         {
             Queue<string> answer = new Queue<string>();
@@ -178,9 +204,9 @@ namespace Calculator
                     i++;
                 }
             }
-            return answer;     
-   
+            return answer;        
         }
+
         private Queue<string> PolishNotation(Queue<string> parsedString)
         {
             Queue<string> output = new Queue<string>();
@@ -308,8 +334,8 @@ namespace Calculator
                     }
                     else
                     {
-                        double second = Double.Parse(ToDecimal(container.Pop()));
-                        double first = Double.Parse(ToDecimal(container.Pop()));
+                        double second = ToDecimal(container.Pop());
+                        double first = ToDecimal(container.Pop());
                         //Console.WriteLine("First = " + first);
                        // Console.WriteLine("Second = " + second);
                         double result;
