@@ -12,7 +12,7 @@ namespace Calculator
     {
         private Regex number = new Regex(@"[-+]?[0-9ABC]*\,?[0-9ABC]+");
         private Regex operation = new Regex(@"[+\-*/]");
-        private Regex exceptions = new Regex(@"-\(-[0-9ABC]+\)");
+        private Regex exceptions = new Regex(@"-\(-[0-9ABC]*\,?[0-9ABC]+\)");
         private Regex innerNumber = new Regex(@"[0-9ABC]+");
 
         private static Dictionary<char, int> digits = new Dictionary<char, int>()
@@ -371,7 +371,7 @@ namespace Calculator
              * be rounded. Else the original value should be returned
              */
             Console.WriteLine(container.Peek());
-            double lastElem = Double.Parse(container.Pop());
+            double lastElem = ToDecimal(container.Pop());
             int ans = (int)Math.Round(lastElem);
 
             return lastElem == (double)ans ? FromDecimal(ans) : FromDecimal(lastElem);
