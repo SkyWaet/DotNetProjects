@@ -76,7 +76,6 @@ namespace ATM
             }
 
             List<int> intNominals = new List<int>();
-            int i = 0;
             foreach (var elem in nominals)
             {
                 try
