@@ -343,15 +343,15 @@ namespace Calculator
                         {
                             case "+":
                                 result = (second + first);
-                                container.Push(result.ToString());
+                                container.Push(FromDecimal(result));
                                 break;
                             case "-":
                                 result = first - second;
-                                container.Push(result.ToString());
+                                container.Push(FromDecimal(result));
                                 break;
                             case "*":
                                 result = first * second;
-                                container.Push(result.ToString());
+                                container.Push(FromDecimal(result));
                                 break;
                             case "/":
                                 if (second == 0)
